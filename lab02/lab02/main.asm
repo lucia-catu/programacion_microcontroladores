@@ -34,7 +34,7 @@ SETUP:
     ldi ZH, high(Tabla<<1)
     ldi ZL, low(Tabla<<1)
 
-	LDI r16, 0x00							; Habilito los pines 0 y 1 del puerto D.
+	LDI r16, 0x00							; Habilitar los pines 0 y 1 del puerto D.
 	STS UCSR0B, r16
 
 ; PORTD como salida (display) 
@@ -53,41 +53,37 @@ SETUP:
     sbi PORTC, PC0
     sbi PORTC, PC1
 
-; Iniciar contador
+; Iniciar contador del display
     clr r18
     call DISPLAY
 
-; PORTB 
+; Activar salidas del PORTB
     ldi  r16, 0x1F
     out  DDRB, r16
 
 ; Inicializar LED PB4 apagada
 	cbi PORTB, PB4
 
- ; Inicializar contador en R21
-    clr  r21
+; Inicializar contadores de tiempo
+    clr  r21	;contador de 1s
+    clr  r22	;contador de 100ms
 
- ; Contador de 100ms (0..9) en R22
-    clr  r22
-
- ; Timer0 modo CTC (WGM01=1)
+; Timer0 modo CTC (WGM01=1)
     ldi  r16, (1<<WGM01)
     out  TCCR0A, r16
 
- ; Prescaler = 1024 (CS02=1, CS00=1)
+; Prescaler = 1024 (CS02=1, CS00=1)
     ldi  r16, (1<<CS02) | (1<<CS00)
     out  TCCR0B, r16
 
- ; TOP para compare match
+; Establecer el tope para compare match
     ldi  r16, 155
     out  OCR0A, r16
 
- ; Reiniciar contador
+; Reiniciar contador
     clr  r16
     out  TCNT0, r16
-
- ; Limpiar bandera de compare match A
-    sbi  TIFR0, OCF0A
+    sbi  TIFR0, OCF0A   ; Limpiar bandera de compare match A
 
     rjmp MAIN
 
@@ -97,10 +93,10 @@ MAIN:
     call suma
     call resta
     
-	rcall WAIT_100MS       ; Timer0 sigue “marcando” 100ms
+	rcall esperar_100MS    ; Timer0 cada 100ms
 
     inc  r22               ; contador de 100ms
-    cpi  r22, 10
+    cpi  r22, 10		   ; repetir 10 veces para 1s
     brne MAIN              ; si aún no llega a 1s, repetir
 
     clr  r22               ; ya pasó 1s
@@ -108,38 +104,38 @@ MAIN:
     inc  r21               ; contador de segundos
     andi r21, 0x0F
 
-    ; ---- si r21 == r18: reiniciar segundos y toggle PB4 ----
+    ; si r21 == r18: reiniciar segundos y toggle PB4 
     cp   r21, r18
     brne NO_MATCH
 
     clr  r21               ; reiniciar contador de segundos
 
     ; toggle PB4 (LED)
-    ldi  r16, (1<<PB4)
+    ldi  r16, (1<<PB4)   ; mascara que deja activo solo PB4
     in   r20, PORTB
-    eor  r20, r16
+    eor  r20, r16        ; cambia solo el estado de los 1
     out  PORTB, r20
 
 NO_MATCH:
-    ; ---- actualizar solo PB0..PB3 con r21, sin tocar PB4 ----
+    ; actualizar solo PB0 a PB3 con r21, NO PB4 
     in   r20, PORTB
     andi r20, 0xF0         ; conserva PB4 y bits altos
     mov  r16, r21
     andi r16, 0x0F
-    or   r20, r16
-    out  PORTB, r20
+    or   r20, r16          
+    out  PORTB, r20        ; mantiene el estado de la LED en PB4
 
     rjmp MAIN
 
-WAIT_100MS:
-    ldi   r23, 10          ; 10 * ~10ms = ~100ms
-WAIT_10MS:
+esperar_100MS:
+    ldi   r23, 10          ; 
+esperar_10MS:
     in    r16, TIFR0
-    sbrs  r16, OCF0A       ; ¿compare match A?
-    rjmp  WAIT_10MS
+    sbrs  r16, OCF0A       ; compare match A
+    rjmp  esperar_10MS
     sbi   TIFR0, OCF0A     ; limpiar bandera escribiendo 1
     dec   r23
-    brne  WAIT_10MS
+    brne  esperar_10MS
     ret
 
 /**************/

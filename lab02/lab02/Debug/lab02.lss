@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm Tue Feb 17 11:38:08 2026
+AVRASM ver. 2.2.8  C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm Tue Feb 17 12:08:32 2026
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm(9): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc'
@@ -1102,11 +1102,9 @@ C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\
                                  ; Inicializar LED PB4 apagada
 00001e 982c                      	cbi PORTB, PB4
                                  
-                                  ; Inicializar contador en R21
-00001f 2755                          clr  r21
-                                 
-                                  ; Contador de 100ms (0..9) en R22
-000020 2766                          clr  r22
+                                  ; Inicializar contadores de tiempo en R21
+00001f 2755                          clr  r21	;contador de 1s
+000020 2766                          clr  r22	;Contador de 100ms
                                  
                                   ; Timer0 modo CTC (WGM01=1)
 000021 e002                          ldi  r16, (1<<WGM01)
@@ -1123,9 +1121,7 @@ C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\
                                   ; Reiniciar contador
 000027 2700                          clr  r16
 000028 bd06                          out  TCNT0, r16
-                                 
-                                  ; Limpiar bandera de compare match A
-000029 9aa9                          sbi  TIFR0, OCF0A
+000029 9aa9                          sbi  TIFR0, OCF0A   ; Limpiar bandera de compare match A
                                  
 00002a c000                          rjmp MAIN
                                  
@@ -1135,7 +1131,7 @@ C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\
 00002b 940e 004c                     call suma
 00002d 940e 005a                     call resta
                                      
-00002f d014                      	rcall WAIT_100MS       ; Timer0 sigue “marcando” 100ms
+00002f d014                      	rcall WAIT_100MS       ; Timer0 sigue marcando 100ms
                                  
 000030 9563                          inc  r22               ; contador de 100ms
 000031 306a                          cpi  r22, 10
@@ -1146,7 +1142,7 @@ C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\
 000034 9553                          inc  r21               ; contador de segundos
 000035 705f                          andi r21, 0x0F
                                  
-                                     ; ---- si r21 == r18: reiniciar segundos y toggle PB4 ----
+                                     ; si r21 == r18: reiniciar segundos y toggle PB4 
 000036 1752                          cp   r21, r18
 000037 f429                          brne NO_MATCH
                                  
@@ -1159,7 +1155,7 @@ C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\
 00003c b945                          out  PORTB, r20
                                  
                                  NO_MATCH:
-                                     ; ---- actualizar solo PB0..PB3 con r21, sin tocar PB4 ----
+                                     ; actualizar solo PB0 a PB3 con r21, NO PB4 
 00003d b145                          in   r20, PORTB
 00003e 7f40                          andi r20, 0xF0         ; conserva PB4 y bits altos
 00003f 2f05                          mov  r16, r21
@@ -1170,10 +1166,10 @@ C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\
 000043 cfe7                          rjmp MAIN
                                  
                                  WAIT_100MS:
-000044 e07a                          ldi   r23, 10          ; 10 * ~10ms = ~100ms
+000044 e07a                          ldi   r23, 10          ; 
                                  WAIT_10MS:
 000045 b305                          in    r16, TIFR0
-000046 ff01                          sbrs  r16, OCF0A       ; ¿compare match A?
+000046 ff01                          sbrs  r16, OCF0A       ; compare match A
 000047 cffd                          rjmp  WAIT_10MS
 000048 9aa9                          sbi   TIFR0, OCF0A     ; limpiar bandera escribiendo 1
 000049 957a                          dec   r23

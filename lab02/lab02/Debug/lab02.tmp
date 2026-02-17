@@ -25,16 +25,16 @@
  <LABELS>
   <Tabla><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>27</LINE></Tabla>
   <SETUP><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>33</LINE></SETUP>
-  <DISPLAY><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>194</LINE></DISPLAY>
-  <MAIN><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>96</LINE></MAIN>
-  <suma><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>148</LINE></suma>
-  <resta><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>172</LINE></resta>
-  <WAIT_100MS><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>134</LINE></WAIT_100MS>
-  <NO_MATCH><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>123</LINE></NO_MATCH>
-  <WAIT_10MS><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>136</LINE></WAIT_10MS>
-  <DELAY><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>210</LINE></DELAY>
-  <esperar_INC><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>162</LINE></esperar_INC>
-  <esperar_DEC><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>186</LINE></esperar_DEC>
-  <DELAY_LOOP><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>212</LINE></DELAY_LOOP>
+  <DISPLAY><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>190</LINE></DISPLAY>
+  <MAIN><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>92</LINE></MAIN>
+  <suma><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>144</LINE></suma>
+  <resta><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>168</LINE></resta>
+  <WAIT_100MS><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>130</LINE></WAIT_100MS>
+  <NO_MATCH><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>119</LINE></NO_MATCH>
+  <WAIT_10MS><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>132</LINE></WAIT_10MS>
+  <DELAY><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>206</LINE></DELAY>
+  <esperar_INC><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>158</LINE></esperar_INC>
+  <esperar_DEC><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>182</LINE></esperar_DEC>
+  <DELAY_LOOP><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>208</LINE></DELAY_LOOP>
  </LABELS>
 </ASSEMBLER_INFO>
