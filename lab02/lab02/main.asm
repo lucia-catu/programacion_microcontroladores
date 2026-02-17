@@ -113,7 +113,7 @@ MAIN:
     ; toggle PB4 (LED)
     ldi  r16, (1<<PB4)   ; mascara que deja activo solo PB4
     in   r20, PORTB
-    eor  r20, r16        ; cambia solo el estado de los 1
+    eor  r20, r16        ; cambia solo el estado de los 1, solo PB4
     out  PORTB, r20
 
 NO_MATCH:
@@ -122,21 +122,21 @@ NO_MATCH:
     andi r20, 0xF0         ; conserva PB4 y bits altos
     mov  r16, r21
     andi r16, 0x0F
-    or   r20, r16          
+    or   r20, r16          ; combinar lo bits altos originales con el nuevo valor de los bits bajos
     out  PORTB, r20        ; mantiene el estado de la LED en PB4
 
     rjmp MAIN
 
 esperar_100MS:
-    ldi   r23, 10          ; 
+    ldi   r23, 10          ; los 10ms se repiten 10 veces
 esperar_10MS:
     in    r16, TIFR0
-    sbrs  r16, OCF0A       ; compare match A
+    sbrs  r16, OCF0A       ; Verifica si la bandera del compare match A está en 1 
     rjmp  esperar_10MS
     sbi   TIFR0, OCF0A     ; limpiar bandera escribiendo 1
-    dec   r23
+    dec   r23              ; restar uno al contador
     brne  esperar_10MS
-    ret
+    ret                    ;retornar hasta que se reptita 10 veces 
 
 /**************/
 ; BOTÓN INCREMENTAR (PC0)
@@ -148,22 +148,22 @@ suma:
     ldi r26, 1        ;antirebote
     call DELAY
 
-    sbic PINC, PC0      ; confirmar que este presionado
+    sbic PINC, PC0      ; confirmar que este presionado, si no lo está, retornar
     ret
 
-    inc r18
+    inc r18              ; incrementar el contador y actualizar el display
     andi r18, 0x0F
     call DISPLAY
 
 esperar_INC:				;para esperar a que se suelte el botón
     sbis PINC, PC0
-	rjmp esperar_INC   
+	rjmp esperar_INC        ;si sigue presioand quedarse esperando
 	ret
        
 
 /**************/
 ; BOTÓN DECREMENTAR (PC1)
-; lo mismo para suma pero cambiar inc por dec, y usar los registros que corresponden
+; Se utiliza la misma lógica que se uso para la suma, pero ahora se decrementa el contador
 
 resta:
     sbic PINC, PC1
@@ -193,7 +193,7 @@ DISPLAY:
     ldi ZH, high(Tabla<<1)
     ldi ZL, low(Tabla<<1)
 
-	add ZL, r18
+	add ZL, r18     ; ZL tiene la dirección más baja de la tabla, por lo que se suma el número del contador 
 
 	lpm r20, Z     ;cargar el valor dentro de Z a r20 y sacarto por portD
 	out PORTD, r20
