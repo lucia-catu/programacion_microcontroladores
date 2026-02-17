@@ -1,0 +1,40 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.8</VERSION>
+ <DEVICE>"ATmega328P"</DEVICE>
+ <WORKING_DIR>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc</FILE>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\Debug\lab02.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>lab02.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>lab02.map</FILE>
+  <FILE>lab02.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <Tabla><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>27</LINE></Tabla>
+  <SETUP><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>33</LINE></SETUP>
+  <DISPLAY><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>194</LINE></DISPLAY>
+  <MAIN><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>96</LINE></MAIN>
+  <suma><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>148</LINE></suma>
+  <resta><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>172</LINE></resta>
+  <WAIT_100MS><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>134</LINE></WAIT_100MS>
+  <NO_MATCH><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>123</LINE></NO_MATCH>
+  <WAIT_10MS><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>136</LINE></WAIT_10MS>
+  <DELAY><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>210</LINE></DELAY>
+  <esperar_INC><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>162</LINE></esperar_INC>
+  <esperar_DEC><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>186</LINE></esperar_DEC>
+  <DELAY_LOOP><FILE>C:\Users\eacat\OneDrive\Documentos\GitHub\programacion_microcontroladores\lab02\lab02\main.asm</FILE><LINE>212</LINE></DELAY_LOOP>
+ </LABELS>
+</ASSEMBLER_INFO>
