@@ -47,11 +47,11 @@ SETUP:
     ldi r16, 0xFF
     out DDRD, r16
 
-    ; PB0/PB1 salida (selección dígitos)
+    ; PB0/PB1 salida 
     sbi DDRB, 0
     sbi DDRB, 1
 
-    ; Estado inicial
+    ; Estado inicial (display apagado)
     cbi PORTB, 0
     cbi PORTB, 1
     ldi r16, 0xFF
@@ -64,17 +64,20 @@ SETUP:
     clr r21
     clr r22
 
-	; Timer0: CTC, prescaler 64, OCR0A=249 (1ms)
-    ldi r16, (1<<WGM01)
+	; Timer0: CTC
+    ldi r16, (1<<WGM01)        ; CTC activado (WGM01=1)
     out TCCR0A, r16
-    ldi r16, (1<<CS01)|(1<<CS00)
+
+    ldi r16, (1<<CS01)|(1<<CS00)  ; prescaler = 64 (CS01=1 y CS00=1)
     out TCCR0B, r16
-    ldi r16, 249
+
+    ldi r16, 249  ; valor de comparación para 1 ms (con 16 MHz)
     out OCR0A, r16
-    ldi r16, (1<<OCIE0A)
+
+    ldi r16, (1<<OCIE0A)  ; habilitar interrupción por Compare Match A de Timer0
     sts TIMSK0, r16
 
-    sei
+    sei     ; habilitar interrupciones globales
 
 /**************/
 	;LOOP PRINCIPAL
@@ -87,7 +90,7 @@ SETUP:
 	; interrupciones
 
 T0_ISR:
-    ; SOLO guardar temporales / Z
+    ; Solo guardar valores temporales 
     push r16
     push r30
     push r31
@@ -97,56 +100,57 @@ T0_ISR:
     cbi PORTB, 1
 
     ; Mux
-    tst r20
-    brne SHOW_TENS
+    tst r20    ; prueba r20 contra 0, si r20 = 0 mostrar unidades
+    brne mostrar_decenas
 
-SHOW_UNITS:
+mostrar_unidades:
     mov r16, r18
     rcall LOAD_SEG
-    out PORTD, r16
-    sbi PORTB, 0          ; ON unidades
-    ldi r20, 1
+    out PORTD, r16        ; sacar el patron de segmentos en el display
+    sbi PORTB, 0          ; Activar dígito de unidades
+    ldi r20, 1            ; Cambiar selector, ahora la siguiente vez mostrar decenas
     rjmp COUNT_MS
 
-SHOW_TENS:
+mostrar_decenas:
     mov r16, r19
     rcall LOAD_SEG
-    out PORTD, r16
-    sbi PORTB, 1          ; ON decenas
-    clr r20
-
-COUNT_MS:
-    ; ms++
+    out PORTD, r16        ; sacar el patron de segmentos en el display
+    sbi PORTB, 1          ; Activar dígito de decenas
+    clr r20               ;; Cambiar selector, ahora la siguiente vez mostrar unidades
+; Incrementar contador de milisegundos
+COUNT_MS:     
     inc r21
     brne MS_CHECK
     inc r22
 
 MS_CHECK:
-    ; 1000 ms = 0x03E8
+	; Comparar si el contador llegó a 1000 ms
     cpi r22, 0x03
     brne EXIT_ISR
     cpi r21, 0xE8
     brne EXIT_ISR
 
+	; Si llegó exactamente a 1000 ms reiniciar milisegundos
     clr r21
     clr r22
 
-; +1 segundo (00..59)
+	;Incrementar contador de segundos
 
-inc r18
-cpi r18, 10
-brlo EXIT_ISR        ; si unidades < 10 ? listo
+	inc r18      ;incrementar unidades
+	cpi r18, 10
+	brlo EXIT_ISR        ; si unidades son menores a 10, salir de la interrupcion
 
-clr r18              ; si llegó a 10 ? volver a 0
-inc r19              ; subir decenas
+	clr r18              ; si llegó a 10, volver a 0
+	inc r19              ; incrementar decenas
 
-cpi r19, 6           ; ¿llegó a 6?
-brlo EXIT_ISR        ; si <6 ? listo (10..59)
+	cpi r19, 6           ; si llega a 6, llego a 60seg
+	brlo EXIT_ISR        ; si es menor a 6 salir de la interrupcion
 
-; si llegó a 60 ? reiniciar
-clr r19
-clr r18
+	; si llegó a 60, reiniciar
+	clr r19
+	clr r18
 
+	;restaurar registros y salir de la ISR
 EXIT_ISR:
     pop r31
     pop r30
