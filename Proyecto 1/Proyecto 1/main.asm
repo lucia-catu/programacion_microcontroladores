@@ -13,6 +13,8 @@
 
 .cseg
 .org 0x0000
+
+
  /****************************************/
 // Configuración de la pila
 LDI     R16, LOW(RAMEND)
@@ -34,6 +36,19 @@ SETUP:
 
 	LDI r16, 0x00							; Habilitar los pines 0 y 1 del puerto D.
 	STS UCSR0B, r16
+
+	; Timer0: CTC
+    ldi r16, (1<<WGM01)        ; CTC activado (WGM01=1)
+    out TCCR0A, r16
+
+    ldi r16, (1<<CS01)|(1<<CS00)  ; prescaler = 64 (CS01=1 y CS00=1)
+    out TCCR0B, r16
+
+    ldi r16, 249  ; valor de comparación para 1 ms (con 16 MHz)
+    out OCR0A, r16
+
+    ldi r16, (1<<OCIE0A)  ; habilitar interrupción por Compare Match A de Timer0
+    sts TIMSK0, r16
     
 /****************************************/
 // Loop Infinito
