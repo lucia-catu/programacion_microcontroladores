@@ -125,15 +125,13 @@ SETUP:
     clr r20
     out PORTD, r20
 
-    ; PORTB = comunes + leds
+    ; PORTB  comunes y leds
     ldi r20, 0b00111111
     out DDRB, r20
     clr r20
     out PORTB, r20
 
-    ; PORTC = botones + buzzer
-    ; PC0-PC4 entradas con pull-up
-    ; PC5 salida buzzer
+    ; PORTC  botones y buzzer
     ldi r20, 0b00100000
     out DDRC, r20
     ldi r20, 0b00011111
@@ -265,7 +263,7 @@ MAIN_LOOP:
     rjmp MAIN_LOOP
 
 ; =====================================
-; MODO 0 = HORA
+; MODO 0 HORA
 ; =====================================
 MODO_0:
     sbi PORTB, LED1    ;prende led1
@@ -281,7 +279,7 @@ MODO_0:
     rjmp MAIN_LOOP
 
 ; =====================================
-; MODO 1 = FECHA
+; MODO 1 FECHA
 ; =====================================
 MODO_1:
     cbi PORTB, LED1 ;apaga led1
@@ -297,7 +295,7 @@ MODO_1:
     rjmp MAIN_LOOP
 
 ; =====================================
-; MODO 2 = CONFIGURAR HORA
+; MODO 2 CONFIGURAR HORA
 ; =====================================
 MODO_2:
     rcall ENTRAR_MODO_2
@@ -309,7 +307,7 @@ MODO_2:
     rjmp MAIN_LOOP
 
 ; =====================================
-; MODO 3 = CONFIGURAR FECHA
+; MODO 3 CONFIGURAR FECHA
 ; =====================================
 MODO_3:
     rcall ENTRAR_MODO_3
@@ -321,7 +319,7 @@ MODO_3:
     rjmp MAIN_LOOP
 
 ; =====================================
-; MODO 4 = CONFIGURAR ALARMA
+; MODO 4 CONFIGURAR ALARMA
 ; =====================================
 MODO_4:
     rcall ENTRAR_MODO_4
@@ -333,7 +331,7 @@ MODO_4:
     rjmp MAIN_LOOP
 
 ; =====================================
-; MODO 5 = ALARMA SONANDO
+; MODO 5 ALARMA SONANDO
 ; =====================================
 MODO_5:
     rcall procesar_aceptar
@@ -1644,7 +1642,7 @@ BUSCAR_TABLA:
     ret
 
 ; =====================================
-; TABLA 7 SEGMENTOS - CATODO COMUN
+; TABLA 7 SEGMENTOS 
 ; =====================================
 Tabla:
     .db 0b00111111, 0b00000110, 0b01011011, 0b01001111, 0b01100110, 0b01101101, 0b01111101, 0b00000111, 0b01111111, 0b01101111
