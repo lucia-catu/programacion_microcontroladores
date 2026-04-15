@@ -1,194 +1,159 @@
 /*
- * prelab4.c
- *
- * Created:
- * Author: Lucia Catú
- * Description: Contador binario de 8 bits
+ * Lab4.c
+ * Created: 
+ * Author : Lucia Catú 
  */
 
-/****************************************/
+/******/
 // Encabezado (Libraries)
+
+#define F_CPU 1000000UL
 #include <avr/io.h>
+#include <stdint.h>
 #include <avr/interrupt.h>
 
-/****************************************/
+
+// VARIABLE UNIVERSAL DE CONTADOR  
+
+volatile uint8_t contador = 0;        // variable del contador en leds
+volatile uint8_t digito = 0;          // variable para multiplexado
+volatile uint8_t comparar = 0;        // variable para comparación de leds y display
+volatile uint8_t numdisplay = 0;      // variable para el valor del display
+
+// Tabla de valores para el display de 7 segmentos
+const uint8_t display[16] = {
+	0x3F,
+	0x06,
+	0x5B,
+	0x4F,
+	0x66,
+	0x6D,
+	0x7D,
+	0x07,
+	0x7F,
+	0x6F,
+	0x77,
+	0x7C,
+	0x39,
+	0x5E,
+	0x79,
+	0x71
+};
+
+/******/
 // Function prototypes
-void setup(void);
-void initGPIO(void);
-void initPCINT(void);
-void initTimer0(void);
-void actualizarLEDs(uint8_t valor);
 
-/****************************************/
-// Variables globales
-volatile uint8_t contador = 0;
+void setup();
+void initADC(); 
+void compare();
 
-// Estado de botones
-volatile uint8_t estadoInc = 1;
-volatile uint8_t estadoDec = 1;
-
-// Flags de antirebote
-volatile uint8_t antireboteIncActivo = 0;
-volatile uint8_t antireboteDecActivo = 0;
-
-// Contadores de tiempo para antirebote
-volatile uint8_t tiempoInc = 0;
-volatile uint8_t tiempoDec = 0;
-
-/****************************************/
+/******/
 // Main Function
-int main(void)     
-{
-	setup();
 
-	while (1)          //este while actualiza constantemente los LEDs según el valor actual de contador
-	{
-		actualizarLEDs(contador);
+int main(void)
+{
+    setup();
+	initADC();
+	sei();                                             
+	while(1){
+		uint8_t port_c = (PORTC & 0xF0) | (contador & 0x0F);   // conservar nibble alto y coloca en el nibble bajo el valor del contador
+		
+		uint8_t bits_altos = (contador & 0xF0) >> 2; //guarda nibble alto y lo coloca en el PORTB
+		
+		uint8_t port_b = (PORTB & 0x03) | (bits_altos & 0xFC);  //conserva los dos bits menos significativos y coloca el niblle alto 
+		
+		cli(); 
+		PORTC = port_c;   //actualiza portc con contador
+		PORTB = port_b;   //actualiza portb con la otra parte del contador
+		compare(); 
+		sei(); 
+	}	
+		
+}
+
+/******/
+// NON-Interrupt subroutines
+
+void setup() {
+	
+	UCSR0B &= ~((1 << RXEN0) | (1 << TXEN0));     
+	
+	PCICR = (1<<PCIE1);                        // habilitar interrupción pinchange
+	PCMSK1 = (1<<PCINT5) | (1<<PCINT4);        // se activa en PC4 Y PC5
+	
+	ADCSRA  |= (1<<ADIE);                      // Habilita interrupción ADC
+	ADCSRA	|= (1<<ADSC);		               // hace conversión de ADC
+	
+	TIMSK0  |= (1<<TOIE0);                     // habilita interrupción por overflow del timer0
+	
+	CLKPR =(1<<CLKPCE);                       // preesclarer
+	CLKPR =(1<<CLKPS2);                       
+	
+	TCCR0A = 0x00;                             // modo normal
+	TCCR0B |= (1<<CS01);	                 
+	TCNT0 = 100;
+	TIFR0  |= (1<<TOV0);
+	
+	DDRD  = 0xFF;                              // definir salidas
+	DDRB  = 0xFF;  
+	DDRC  = 0x0F;
+	
+	PORTD = 0xFF;                              
+	PORTB = 0xFF;
+	PORTC = 0xFF;                              // activar pullup
+}
+
+void initADC(){
+
+	ADMUX = (1<<REFS0)|(1<<ADLAR)|(1<<MUX0)|(1<<MUX1)|(1<<MUX2);   //selecciona el canal ADC7
+
+	ADCSRA = (1<<ADEN)|(1<<ADIE)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);  //habilita adc y su interrupción
+
+	ADCSRA |= (1<<ADSC); //inicia conversión ADC
+}
+void compare() {                                
+	if (contador == ADCH) {                     // si el contador es igual al ADC enciende PD7
+		PORTD |= (1 << PORTD7);                 
+		} 
+		else {                          
+		PORTD &= ~(1 << PORTD7);                // sino son iguales lo apaga
 	}
 }
-
-/****************************************/
-// NON-Interrupt subroutines
-void setup(void)
-{
-    cli();
-
-    initGPIO();
-    initPCINT();
-    initTimer0();
-
-    actualizarLEDs(contador);
-
-    sei();
-}
-
-void initGPIO(void)
-{
-    /************ LEDs ************/
-    DDRB |= (1 << DDB4) | (1 << DDB5);   // PB4 y PB5 como salida
-    DDRC |= 0x3F;                        // PC0 a PC5 como salida
-
-    /************ Botones ************/
-    DDRD &= ~(1 << DDD7);                // PD7 entrada
-    DDRB &= ~(1 << DDB1);                // PB1 entrada
-
-    PORTD |= (1 << PORTD7);              // Pull-up PD7
-    PORTB |= (1 << PORTB1);              // Pull-up PB1
-}
-
-void initPCINT(void)
-{
-    // PD7- PCINT23
-    PCICR |= (1 << PCIE2);
-    PCMSK2 |= (1 << PCINT23);
-
-    // PB1 - PCINT1
-    PCICR |= (1 << PCIE0);
-    PCMSK0 |= (1 << PCINT1);
-}
-
-void initTimer0(void)
-{
-    // Timer0 en CTC a 1 ms
-
-    TCCR0A = 0;
-    TCCR0B = 0;
-
-    TCCR0A |= (1 << WGM01);              // modo CTC
-    OCR0A = 249;                         // 1 ms
-    TIMSK0 |= (1 << OCIE0A);             // interrupción compare A
-
-    TCCR0B |= (1 << CS01) | (1 << CS00); // prescaler 64
-}
-
-void actualizarLEDs(uint8_t valor)
-{
-    // Limpiar PB4 y PB5
-    PORTB &= ~((1 << PORTB4) | (1 << PORTB5));
-
-    // b0 - PB4
-    if (valor & (1 << 0))
-        PORTB |= (1 << PORTB4);
-
-    // b7 - PB5
-    if (valor & (1 << 7))
-        PORTB |= (1 << PORTB5);
-
-    // Limpiar PC0-PC5
-    PORTC &= ~0x3F;
-
-    // b1-b6 * se evalua los bits del 1 al 6 del numero, si un bit esta en 1 enciende la led del PORTC
-    if (valor & (1 << 1)) PORTC |= (1 << PORTC5);
-    if (valor & (1 << 2)) PORTC |= (1 << PORTC4);
-    if (valor & (1 << 3)) PORTC |= (1 << PORTC3);
-    if (valor & (1 << 4)) PORTC |= (1 << PORTC2);
-    if (valor & (1 << 5)) PORTC |= (1 << PORTC1);
-    if (valor & (1 << 6)) PORTC |= (1 << PORTC0);
-}
-
-/****************************************/
+/******/
 // Interrupt routines
 
-// PD7 (incrementar)
-ISR(PCINT2_vect)
-{
-    if (!antireboteIncActivo)
-    {
-        antireboteIncActivo = 1;
-        tiempoInc = 0;
-    }
+ISR(PCINT1_vect){                               // Interrupción por pin change
+	if (!(PINC & (1 << PINC4))) {               
+		contador++ ;                            // si incrementar se presiona sumar al contador
+	}
+	  if (!(PINC & (1 << PINC5))) {
+		contador-- ;                            // si decrementar se presiona restar al contador
+	  }
 }
 
-// PB1 (decrementar)
-ISR(PCINT0_vect)
-{
-    if (!antireboteDecActivo)
-    {
-        antireboteDecActivo = 1;
-        tiempoDec = 0;
-    }
+
+ISR(ADC_vect){                                  // interrupción cuando termina una conversión ADC
+	ADCSRA |= (1<<ADSC);                        // inicia una nueva conversión
 }
 
-// Timer cada 1 ms
-ISR(TIMER0_COMPA_vect)
-{
-    /************ Incrementar ************/
-    if (antireboteIncActivo)
-    {
-        tiempoInc++;
+ISR(TIMER0_OVF_vect) {
+	
+	PORTB |= (1 << PORTB0) | (1 << PORTB1); // Apagar displays para no tener ghosting
+	
+	
+	PORTD &= 0x80;     // Apagamos los segmentos PD0-PD6, conserva PD7
+	
+	TCNT0 = 100;   //recarga el timer 0 para hacer overflow
 
-        if (tiempoInc >= 20)
-        {
-            uint8_t lecturaActual = (PIND & (1 << PIND7)) ? 1 : 0;
-
-            if ((estadoInc == 1) && (lecturaActual == 0))
-            {
-                contador++;
-            }
-
-            estadoInc = lecturaActual;
-            antireboteIncActivo = 0;
-            tiempoInc = 0;
-        }
-    }
-
-    /************ Decrementar ************/
-    if (antireboteDecActivo)
-    {
-        tiempoDec++;
-
-        if (tiempoDec >= 20)
-        {
-            uint8_t lecturaActual = (PINB & (1 << PINB1)) ? 1 : 0;
-
-            if ((estadoDec == 1) && (lecturaActual == 0))
-            {
-                contador--;
-            }
-
-            estadoDec = lecturaActual;
-            antireboteDecActivo = 0;
-            tiempoDec = 0;
-        }
-    }
+	if (digito == 0) {
+		
+		PORTD |= (display[ADCH & 0x0F] & 0x7F); //muestra en display nibble bajo
+		PORTB &= ~(1 << PORTB0);    // activa primer display
+		digito = 1;       //luego mostrara el otro digito
+	}
+	else {
+		PORTD |= (display[(ADCH >> 4) & 0x0F] & 0x7F);  //muestra en display nibble alto
+		PORTB &= ~(1 << PORTB1);          //activa el segundo display
+		digito = 0;                       //luego se muestra el primer digito
+	}
 }
