@@ -1,6 +1,5 @@
 /*
  * prelab5.c
- *
  * Created: 
  * Author: Lucia Catú
  * Description: 
