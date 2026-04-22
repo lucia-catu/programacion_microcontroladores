@@ -2,7 +2,7 @@
  * PWM1.c
  *
  * Created: 
- *  Author: 
+ *  Author: Lucia Catú
  */ 
 #include "PWM1.h"
 

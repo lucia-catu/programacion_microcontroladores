@@ -36,8 +36,4 @@ void updateDutyCycle1A(uint32_t duty);
 void updateDutyCycle1B(uint32_t duty);
 
 
-
-
-
-
 #endif /* PWM1_H_ */
