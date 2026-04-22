@@ -15,14 +15,14 @@ void initPWM2A(void)
 	TCCR2A = 0;
 	TCCR2B = 0;
 
-	// Modo 3: Fast PWM de 8 bits
+	// Modo 3 Fast PWM de 8 bits
 	TCCR2A |= (1 << WGM21) | (1 << WGM20);
 	TCCR2A |= (1 << COM2A1);
 
-	// EL TRUCO: Prescaler = 1024 (CS22 = 1, CS21 = 1, CS20 = 1)
+	// Prescaler = 1024 (CS22 = 1, CS21 = 1, CS20 = 1)
 	TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);
 	
-	// Posición inicial (centro aproximado, ~23)
+	// Posición inicial
 	OCR2A = 23;
 }
 

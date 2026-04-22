@@ -19,7 +19,7 @@ uint16_t readADC(uint8_t channel)
 	channel &= 0x07;
 	ADMUX = (ADMUX & 0xF8) | channel;
 	
-	// Hacemos una primera conversión y no la guardamos para dar tiempo para estabilizar la señal
+	// se hace una primera conversión y no la guardamos para dar tiempo para estabilizar la señal
 	ADCSRA |= (1 << ADSC);
 	while (ADCSRA & (1 << ADSC));
 
